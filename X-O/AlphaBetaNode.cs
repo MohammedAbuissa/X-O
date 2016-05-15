@@ -68,9 +68,9 @@ namespace X_O
         private void Win(Board sender, bool Player)
         {
             if (Player)
-                Value = 1;
-            else
                 Value = -1;
+            else
+                Value = 1;
             Type = null;
         }
         private void Draw(Board sender, bool Player)
@@ -96,12 +96,25 @@ namespace X_O
                         Value = Dummy.Value < Value ? Dummy.Value : Value;
                     }
                     Children.Add(Dummy);
+                    if (Beta <= Alpha)
+                        break;
                 }
         }
 
         public int CompareTo(AlphaBetaNode other)
         {
-            return Data.CompareTo(other.Data);
+            if (Value > other.Value)
+            {
+                return 1;
+            }
+            else if (Value == other.Value)
+            {
+                return 0;
+            }
+            else
+            {
+                return -1;
+            }
         }
 
         public int CompareTo(AgentBoard other)

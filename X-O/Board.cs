@@ -125,7 +125,7 @@ namespace X_O
                     return null;
             }
             if (XO[0, 2] == XO[1, 1] && XO[1, 1] == XO[2, 0] && XO[2, 0] ==XO[0,2])
-                return XO[0, 0];
+                return XO[0, 2];
             return null;
         }
         private bool isDraw()
