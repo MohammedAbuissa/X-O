@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 namespace X_O
 {
     delegate void BoardActionHandler(Board sender, bool Player);
-    class Board
+    //ToDo handle Draw well
+    class Board : IComparable<Board>
     {
-        byte Size;
-        bool?[,] XO;
-        bool Player = false;
+        protected byte Size;
+        protected bool?[,] XO;
+        //should be fixed
+        protected bool Player = false;
 
         public event BoardActionHandler Win;
         public event BoardActionHandler Draw;
@@ -26,10 +28,11 @@ namespace X_O
             XO = new bool?[Size, Size];
         }
         //clone constructor
-        private Board(byte Size, bool?[,] XO, BoardActionHandler Win, BoardActionHandler Draw):this(Win, Draw)
+        protected Board(byte Size, bool?[,] XO, bool Player,BoardActionHandler Win, BoardActionHandler Draw):this(Win, Draw)
         {
             this.Size = Size;
             this.XO = (bool?[,])XO.Clone();
+            this.Player = Player;
         }
 
         public void Play(byte i, byte j)
@@ -41,6 +44,11 @@ namespace X_O
                     XO[i, j] = Player;
                     Player = !Player;
                     //calculate board and call an action
+                    if (isDraw())
+                    {
+                        Draw(this, false);
+                        return;
+                    }
                     for (byte l = 0; l < Size; l++)
                     {
                         if(isWinColumn(l) != null)
@@ -67,7 +75,12 @@ namespace X_O
                 throw new Exception("index is greater than " + Size + " the board size");
         }
 
+        public void Play(Pair Move)
+        {
+            Play(Move.X, Move.Y);
+        }
 
+        //edit isActionArray methods to be more general and reusable :D 
         private bool? isWinRow(byte i)
         {
             for (int k = 0; k < Size; k++)
@@ -115,7 +128,18 @@ namespace X_O
                 return XO[0, 0];
             return null;
         }
-
+        private bool isDraw()
+        {
+            for (int i = 0; i < Size; i++)
+            {
+                for (int j = 0; j < Size; j++)
+                {
+                    if (XO[i, j] == null)
+                        return false;
+                }
+            }
+            return true;
+        }
         public override string ToString()
         {
             string Retrun = "";
@@ -134,7 +158,20 @@ namespace X_O
         }
         public Board Clone()
         {
-            return new Board(Size, XO, Win, Draw);
+            return new Board(Size, XO, Player,Win, Draw);
+        }
+
+        public int CompareTo(Board other)
+        {
+            for (int i = 0; i < Size; i++)
+            {
+                for (int j = 0; j < Size; j++)
+                {
+                    if (this.XO[i, j] != other.XO[i, j])
+                        return -1;
+                }
+            }
+            return 0;
         }
     }
 }

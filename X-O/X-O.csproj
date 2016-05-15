@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Agent.cs" />
+    <Compile Include="AgentBoard.cs" />
     <Compile Include="AlphaBetaNode.cs" />
     <Compile Include="Board.cs" />
     <Compile Include="Program.cs" />
